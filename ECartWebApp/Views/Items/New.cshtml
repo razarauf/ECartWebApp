@@ -1,0 +1,96 @@
+﻿@model ECartWebApp.ViewModels.ItemViewModel
+
+@{
+    ViewBag.Title = "New";
+}
+
+<h2>New</h2>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                @Html.LabelFor(m => m.CategoriesList)
+                @Html.DropDownListFor(m => m.CategoryId, new SelectList(Model.CategoriesList, "Value", "Text"), new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                @Html.LabelFor(m => m.ItemCode)
+                @Html.TextBoxFor(m => m.ItemCode, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                @Html.LabelFor(m => m.ItemName)
+                @Html.TextBoxFor(m => m.ItemName, new { @class = "form-control" })
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                @Html.LabelFor(m => m.Description)
+                @Html.TextBoxFor(m => m.Description, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                @Html.LabelFor(m => m.ItemPrice)
+                @Html.TextBoxFor(m => m.ItemPrice, new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                @Html.Label("Image")
+                <input type="file" id="imageFile" />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <input type="button" class="btn btn-primary" id="btnUpload" value="Save" />
+        </div>
+        <div class="col-md-2">
+            <input type="button" class="btn btn-default" value="Reset" />
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $('#btnUpload').click(function () {
+                console.log("button clicked");
+                let fileUpload = $("#imageFile").get(0);
+                let files = fileUpload.files;
+
+                let fileData = new FormData();
+
+                fileData.append("Image", files[0]);
+
+                fileData.append("CategoryId", $("#CategoryId").val());
+                fileData.append("ItemCode", $("#ItemCode").val());
+                fileData.append("ItemName", $("#ItemName").val());
+                fileData.append("Description", $("#Description").val());
+                fileData.append("ItemPrice", $("#ItemPrice").val());
+
+                $.ajax({
+                    url: "/Items/PostToThis",
+                    type: "POST",
+                    processData: false,
+                    contentType: false,
+                    data: fileData,
+                    success: function (result) {
+                        alert(result.Message);
+                    },
+                    error: function (err) {
+                        alert(err.statusText);
+                    }
+                });
+
+            });
+        });
+    </script>
+}
